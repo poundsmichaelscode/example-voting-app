@@ -1,0 +1,24 @@
+FROM node:24-bookworm-slim
+
+ENV NODE_ENV=production
+ENV PORT=8080
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends tini && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /usr/local/app
+
+COPY package*.json ./
+
+RUN npm ci --omit=dev && \
+    npm cache clean --force
+
+COPY --chown=node:node . .
+
+USER node
+
+EXPOSE 8080
+
+ENTRYPOINT ["/usr/bin/tini", "--"]
+CMD ["node", "server.js"]
