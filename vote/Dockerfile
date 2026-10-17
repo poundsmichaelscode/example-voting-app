@@ -22,11 +22,14 @@ CMD ["python", "app.py"]
 # final defines the stage that will bundle the application for production
 FROM base AS final
 
-# Copy our code from the current folder to the working directory inside the container
 COPY . .
 
-# Make port 80 available for links and/or publish
-EXPOSE 80
+RUN groupadd --system appgroup && \
+    useradd --system --gid appgroup --home-dir /usr/local/app appuser && \
+    chown -R appuser:appgroup /usr/local/app
 
-# Define our command to be run when launching the container
-CMD ["gunicorn", "app:app", "-b", "0.0.0.0:80", "--log-file", "-", "--access-logfile", "-", "--workers", "4", "--keep-alive", "0"]
+USER appuser
+
+EXPOSE 8080
+
+CMD ["gunicorn", "app:app", "-b", "0.0.0.0:8080", "--log-file", "-", "--access-logfile", "-", "--workers", "4", "--keep-alive", "0"]
