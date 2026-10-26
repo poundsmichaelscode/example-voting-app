@@ -5,3 +5,6 @@ obj/
 .vs/
 node_modules/
 .env.prod
+
+# Local vulnerability scan outputs
+security-reports/
