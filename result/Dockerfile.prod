@@ -1,4 +1,4 @@
-FROM node:24-bookworm-slim
+FROM node:24-trixie-slim
 
 ENV NODE_ENV=production
 ENV PORT=8080
@@ -13,6 +13,12 @@ COPY package*.json ./
 
 RUN npm ci --omit=dev && \
     npm cache clean --force
+
+# npm is only needed while installing dependencies.
+# Remove bundled npm tooling from the production runtime.
+RUN rm -rf /usr/local/lib/node_modules/npm \
+    /usr/local/bin/npm \
+    /usr/local/bin/npx
 
 COPY --chown=node:node . .
 
