@@ -1,0 +1,88 @@
+name: voting-app-prod
+
+services:
+  vote:
+    build:
+      context: ./vote
+      target: final
+    ports:
+      - "127.0.0.1:8090:8080"
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks:
+      - frontend
+      - backend
+    restart: unless-stopped
+
+  result:
+    build:
+      context: ./result
+      dockerfile: Dockerfile.prod
+    environment:
+      DATABASE_URL: "postgres://postgres:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}@db/postgres"
+    ports:
+      - "127.0.0.1:8091:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - frontend
+      - backend
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile.prod
+    environment:
+      POSTGRES_CONNECTION_STRING: "Server=db;Username=postgres;Password=${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD};"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - backend
+    restart: unless-stopped
+
+  redis:
+    image: redis:alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - backend
+    restart: unless-stopped
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}"
+      POSTGRES_DB: postgres
+    volumes:
+      - production-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  production-db-data:
+
+networks:
+  frontend:
+  backend:
