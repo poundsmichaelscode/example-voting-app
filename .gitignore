@@ -8,3 +8,11 @@ node_modules/
 
 # Local vulnerability scan outputs
 security-reports/
+
+# Terraform local files
+**/.terraform/
+**/*.tfstate
+**/*.tfstate.*
+**/*.tfvars
+**/*.tfvars.json
+**/*.tfplan
