@@ -1,0 +1,32 @@
+===== DATE =====
+Fri 30 Oct 2026 15:57:51 WAT
+===== GIT COMMIT =====
+6dca4fe0ce120ce7e06d2b18abe38b25ee83652c
+===== HELM HISTORY =====
+REVISION	UPDATED                 	STATUS    	CHART           	APP VERSION 	DESCRIPTION     
+1       	Fri Oct 30 14:43:05 2026	superseded	voting-app-0.1.0	1aa3fcf81d10	Install complete
+2       	Fri Oct 30 14:53:23 2026	superseded	voting-app-0.1.0	1aa3fcf81d10	Upgrade complete
+3       	Fri Oct 30 14:53:58 2026	superseded	voting-app-0.1.0	1aa3fcf81d10	Rollback to 1   
+4       	Fri Oct 30 15:52:37 2026	deployed  	voting-app-0.1.0	1aa3fcf81d10	Upgrade complete
+===== APPLICATION PODS =====
+NAME                             READY   STATUS    RESTARTS   AGE
+voting-db-0                      1/1     Running   0          74m
+voting-redis-9b99c95c8-rkxrk     1/1     Running   0          74m
+voting-result-8fdd77648-mbm72    1/1     Running   0          5m13s
+voting-vote-b749c469c-6k5p4      1/1     Running   0          5m13s
+voting-worker-75fb857b74-8xqjh   1/1     Running   0          5m12s
+===== DEPLOYED IMAGES =====
+NAME            IMAGE
+voting-redis    redis:7-alpine
+voting-result   poundsmichaels/voting-app-result:e453f22c90bd45bf8c9e93242cb813cd9474df43
+voting-vote     poundsmichaels/voting-app-vote:e453f22c90bd45bf8c9e93242cb813cd9474df43
+voting-worker   poundsmichaels/voting-app-worker:e453f22c90bd45bf8c9e93242cb813cd9474df43
+===== DATABASE STORAGE =====
+NAME                        STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+postgres-data-voting-db-0   Bound    pvc-b501dee9-3d43-40db-a0fd-a353d82eca9d   5Gi        RWO            voting-gp3     <unset>                 74m
+===== DATABASE RECORD COUNT =====
+ total_votes 
+-------------
+           1
+(1 row)
+
