@@ -1,0 +1,70 @@
+images:
+  vote:
+    repository: poundsmichaels/voting-app-vote
+    tag: "1aa3fcf81d10"
+  result:
+    repository: poundsmichaels/voting-app-result
+    tag: "1aa3fcf81d10"
+  worker:
+    repository: poundsmichaels/voting-app-worker
+    tag: "1aa3fcf81d10"
+  redis:
+    repository: redis
+    tag: "7-alpine"
+  postgres:
+    repository: postgres
+    tag: "15-alpine"
+
+replicaCount:
+  vote: 1
+  result: 1
+  worker: 1
+
+service:
+  vote:
+    port: 8080
+  result:
+    port: 8080
+
+postgres:
+  database: postgres
+  username: postgres
+  existingSecret: voting-app-db
+  storageSize: 5Gi
+
+resources:
+  vote:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  result:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  worker:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  redis:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  postgres:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi

@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: voting-worker
+spec:
+  replicas: {{ .Values.replicaCount.worker }}
+  selector:
+    matchLabels:
+      app: voting-worker
+  template:
+    metadata:
+      labels:
+        app: voting-worker
+    spec:
+      containers:
+        - name: worker
+          image: "{{ .Values.images.worker.repository }}:{{ .Values.images.worker.tag }}"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgres.existingSecret }}
+                  key: password
+            - name: POSTGRES_CONNECTION_STRING
+              value: "Server=db;Username=postgres;Password=$(POSTGRES_PASSWORD);Database=postgres;"
+          resources:
+            {{- toYaml .Values.resources.worker | nindent 12 }}
