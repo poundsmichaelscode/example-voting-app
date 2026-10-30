@@ -1,0 +1,36 @@
+name: Verify AWS OIDC Authentication
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  verify-aws:
+    name: Verify temporary AWS credentials
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure temporary AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6.3.0
+        with:
+          role-to-assume: arn:aws:iam::845242190899:role/ts-voting-capstone-github-deploy-role
+          aws-region: us-east-1
+          allowed-account-ids: 845242190899
+          role-session-name: github-oidc-verification
+
+      - name: Verify AWS identity
+        run: |
+          aws sts get-caller-identity \
+            --query '{Account:Account,Arn:Arn}' \
+            --output json
+
+      - name: Verify EKS DescribeCluster permission
+        run: |
+          aws eks describe-cluster \
+            --name ts-voting-capstone \
+            --region us-east-1 \
+            --query 'cluster.{Name:name,Status:status,Version:version}' \
+            --output json
